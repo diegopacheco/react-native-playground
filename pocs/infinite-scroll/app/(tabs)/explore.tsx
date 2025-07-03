@@ -1,12 +1,11 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
+import { StyleSheet } from 'react-native';
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+const packageJson = require('../../package.json');
 
 export default function TabTwoScreen() {
   return (
@@ -16,81 +15,137 @@ export default function TabTwoScreen() {
         <IconSymbol
           size={310}
           color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
+          name="info.circle"
           style={styles.headerImage}
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
+        <ThemedText type="title">About</ThemedText>
       </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
+      <ThemedText>Infinite Scroll Demo - React Native {packageJson.dependencies['react-native']}</ThemedText>
+      <Collapsible title="How Infinite Scroll Works">
         <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
+          The infinite scroll implementation uses React Native&apos;s{' '}
+          <ThemedText type="defaultSemiBold">FlatList</ThemedText> component with the{' '}
+          <ThemedText type="defaultSemiBold">onEndReached</ThemedText> prop to detect when the user
+          scrolls near the bottom of the list.
         </ThemedText>
         <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
+          Key features:
         </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">Pagination:</ThemedText> Loads 15 items per page
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">Loading States:</ThemedText> Shows loading indicators during data fetch
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">Performance:</ThemedText> FlatList only renders visible items
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">End Detection:</ThemedText> Stops loading after 10 pages (150 items)
+        </ThemedText>
+        <ExternalLink href="https://reactnative.dev/docs/flatlist">
+          <ThemedText type="link">Learn more about FlatList</ThemedText>
         </ExternalLink>
       </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
+      <Collapsible title="Implementation Details">
         <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
+          The <ThemedText type="defaultSemiBold">InfiniteScrollList</ThemedText> component is located in{' '}
+          <ThemedText type="defaultSemiBold">components/InfiniteScrollList.tsx</ThemedText>
+        </ThemedText>
+        <ThemedText>
+          It uses React hooks for state management:
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">useState:</ThemedText> Manages data, loading state, and pagination
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">useCallback:</ThemedText> Optimizes data loading functions
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">useEffect:</ThemedText> Triggers initial data load
         </ThemedText>
       </Collapsible>
-      <Collapsible title="Images">
+      <Collapsible title="Key Props & Configuration">
         <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
+          The FlatList component uses these important props:
         </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">onEndReached:</ThemedText> Callback when user reaches bottom
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">onEndReachedThreshold:</ThemedText> Set to 0.1 (10% from bottom)
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">ListFooterComponent:</ThemedText> Shows loading indicator
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">keyExtractor:</ThemedText> Unique key for each item
+        </ThemedText>
+        <ExternalLink href="https://reactnative.dev/docs/flatlist#onendreached">
+          <ThemedText type="link">Learn more about onEndReached</ThemedText>
         </ExternalLink>
       </Collapsible>
-      <Collapsible title="Custom fonts">
+      <Collapsible title="Performance Optimizations">
         <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
+          Several optimizations make infinite scroll performant:
         </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">Virtual Scrolling:</ThemedText> Only renders visible items
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">Memoized Callbacks:</ThemedText> Prevents unnecessary re-renders
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">Debounced Loading:</ThemedText> Prevents multiple rapid requests
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">Efficient Key Extraction:</ThemedText> Uses stable item IDs
+        </ThemedText>
+        <ExternalLink href="https://reactnative.dev/docs/performance">
+          <ThemedText type="link">Learn more about performance</ThemedText>
         </ExternalLink>
       </Collapsible>
-      <Collapsible title="Light and dark mode components">
+      <Collapsible title="Technology Stack">
         <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
+          This demo uses the following technologies:
         </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">React Native:</ThemedText> {packageJson.dependencies['react-native']}
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">React:</ThemedText> {packageJson.dependencies['react']}
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">Expo:</ThemedText> {packageJson.dependencies['expo']}
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">TypeScript:</ThemedText> {packageJson.devDependencies['typescript']}
+        </ThemedText>
+        <ExternalLink href="https://reactnative.dev/">
+          <ThemedText type="link">Learn more about React Native</ThemedText>
         </ExternalLink>
       </Collapsible>
-      <Collapsible title="Animations">
+      <Collapsible title="Try It Out">
         <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
+          Switch to the Home tab to see the infinite scroll in action:
         </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">Initial Load:</ThemedText> Displays first 15 items
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">Scroll Down:</ThemedText> Automatically loads more items
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">Loading State:</ThemedText> Shows spinner during data fetch
+        </ThemedText>
+        <ThemedText>
+          • <ThemedText type="defaultSemiBold">End State:</ThemedText> Stops loading after 150 items
+        </ThemedText>
+        <ThemedText>
+          Each page simulates a 1-second network delay to demonstrate the loading experience.
+        </ThemedText>
       </Collapsible>
     </ParallaxScrollView>
   );
