@@ -2,6 +2,71 @@
 
 A mobile application built with React Native and Go backend that demonstrates server-driven UI architecture. The entire user interface is dynamically generated from the backend, allowing for real-time updates without app store deployments.
 
+## Backend Logs
+
+```
+❯ ./run.sh
+Starting Dynamic Server-Driven UI Backend...
+API will be available at http://localhost:8080
+
+Available endpoints:
+  GET /api/page/header
+  GET /api/page/footer
+  GET /api/page/page_calculator
+  GET /api/page/page_note_page
+  GET /api/page/page_info
+
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /api/page/:name           --> main.getPage (4 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+[GIN] 2025/09/18 - 22:49:16 | 200 |     712.916µs |             ::1 | GET      "/api/page/page_calculator"
+[GIN] 2025/09/18 - 22:49:17 | 200 |      18.042µs |             ::1 | GET      "/api/page/header"
+[GIN] 2025/09/18 - 22:49:20 | 200 |          38µs |             ::1 | GET      "/api/page/footer"
+[GIN] 2025/09/18 - 22:49:21 | 200 |     226.333µs |             ::1 | GET      "/api/page/page_calculator"
+[GIN] 2025/09/18 - 22:49:22 | 200 |     129.208µs |             ::1 | GET      "/api/page/page_note_page"
+[GIN] 2025/09/18 - 22:49:24 | 200 |   14.994333ms |             ::1 | GET      "/api/page/page_calculator"
+```
+
+## IOS Simnulator Logs
+
+```
+iOS Bundled 349ms node_modules/expo-router/entry.js (1373 modules)
+ LOG  Fetching page: http://localhost:8080/api/page/page_calculator
+ LOG  Fetched page: page_calculator Code length: 6777
+ LOG  Fetching page: http://localhost:8080/api/page/header
+ LOG  Fetched page: header Code length: 312
+ LOG  Fetching page: http://localhost:8080/api/page/footer
+ LOG  Fetched page: footer Code length: 305
+ LOG  Fetching page: http://localhost:8080/api/page/page_calculator
+ LOG  Fetched page: page_calculator Code length: 6777
+ LOG  Fetching page: http://localhost:8080/api/page/page_note_page
+ LOG  Fetched page: page_note_page Code length: 3773
+ LOG  Fetching page: http://localhost:8080/api/page/page_calculator
+ LOG  Fetched page: page_calculator Code length: 6777
+```
+
+## Backend on Full Server Driven UI
+
+```bash
+❯ curl -s http://localhost:8080/api/page/footer | jq .
+{
+  "name": "footer",
+  "code": "\nconst FooterComponent = () => {\n  return React.createElement(View, {\n    style: { backgroundColor: '#333', padding: 15, alignItems: 'center' }\n  },\n    React.createElement(Text, {\n      style: { color: 'white', fontSize: 12 }\n    }, '© 2025 Dynamic App - Diego Pacheco')\n  );\n};\n\nreturn FooterComponent;\n"
+}
+```
+
+
+## Dynamic APP Result
+
+<img src="dynamic-app.png" width="300" />
+
 ## Architecture
 
 - **Frontend**: React Native + Expo

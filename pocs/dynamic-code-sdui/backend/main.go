@@ -63,7 +63,7 @@ const HeaderComponent = () => {
   );
 };
 
-return HeaderComponent();
+return HeaderComponent;
 `
 	return Page{
 		Name: "header",
@@ -83,7 +83,7 @@ const FooterComponent = () => {
   );
 };
 
-return FooterComponent();
+return FooterComponent;
 `
 	return Page{
 		Name: "footer",
@@ -292,7 +292,7 @@ const CalculatorComponent = () => {
   );
 };
 
-return CalculatorComponent();
+return CalculatorComponent;
 `
 
 	return Page{
@@ -413,7 +413,7 @@ const NotesComponent = () => {
   );
 };
 
-return NotesComponent();
+return NotesComponent;
 `
 
 	return Page{
@@ -500,7 +500,7 @@ const InfoComponent = () => {
   );
 };
 
-return InfoComponent();
+return InfoComponent;
 `
 
 	return Page{

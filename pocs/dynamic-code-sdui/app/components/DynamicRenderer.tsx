@@ -22,13 +22,7 @@ export default function DynamicRenderer({ page }: DynamicRendererProps) {
       const executeCode = new Function(
         'React', 'View', 'Text', 'TextInput', 'TouchableOpacity', 'ScrollView', 'Alert',
         'Math', 'parseFloat', 'parseInt', 'isNaN', 'console',
-        `
-          ${page.code.replace('return CalculatorComponent();', 'return CalculatorComponent;')
-                     .replace('return HeaderComponent();', 'return HeaderComponent;')
-                     .replace('return FooterComponent();', 'return FooterComponent;')
-                     .replace('return NotesComponent();', 'return NotesComponent;')
-                     .replace('return InfoComponent();', 'return InfoComponent;')}
-        `
+        page.code
       );
 
       const ComponentFunction = executeCode(
