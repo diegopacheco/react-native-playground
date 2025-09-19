@@ -13,11 +13,13 @@ type Component struct {
 	Children []Component            `json:"children,omitempty"`
 	Text     string                 `json:"text,omitempty"`
 	Actions  map[string]string      `json:"actions,omitempty"`
+	Code     string                 `json:"code,omitempty"`
 }
 
 type Page struct {
 	Name       string      `json:"name"`
 	Components []Component `json:"components"`
+	Code       string      `json:"code,omitempty"`
 }
 
 func main() {
@@ -121,8 +123,68 @@ func getFooterPage() Page {
 }
 
 func getCalculatorPage() Page {
+	calculatorCode := `
+// Dynamic Calculator Logic from Backend
+const performCalculation = (operation, num1, num2) => {
+  const n1 = parseFloat(num1 || '0');
+  const n2 = parseFloat(num2 || '0');
+
+  if (isNaN(n1) || isNaN(n2)) {
+    return 'Error: Please enter valid numbers';
+  }
+
+  let result;
+  let symbol;
+
+  switch (operation) {
+    case 'add':
+      result = n1 + n2;
+      symbol = '+';
+      break;
+    case 'subtract':
+      result = n1 - n2;
+      symbol = '-';
+      break;
+    case 'multiply':
+      result = n1 * n2;
+      symbol = '×';
+      break;
+    case 'divide':
+      if (n2 === 0) {
+        return 'Error: Cannot divide by zero';
+      }
+      result = n1 / n2;
+      symbol = '÷';
+      break;
+    case 'power':
+      result = Math.pow(n1, n2);
+      symbol = '^';
+      break;
+    case 'sqrt':
+      if (n1 < 0) {
+        return 'Error: Cannot take square root of negative number';
+      }
+      result = Math.sqrt(n1);
+      return 'sqrt(' + n1 + ') = ' + result.toFixed(4);
+    default:
+      return 'Error: Unknown operation';
+  }
+
+  return n1 + ' ' + symbol + ' ' + n2 + ' = ' + result;
+};
+
+const getRandomNumber = () => {
+  return Math.floor(Math.random() * 100) + 1;
+};
+
+const clearInputs = () => {
+  return { num1: '', num2: '', result: 'Result cleared' };
+};
+`
+
 	return Page{
 		Name: "page_calculator",
+		Code: calculatorCode,
 		Components: []Component{
 			{
 				Type: "ScrollView",
@@ -302,6 +364,126 @@ func getCalculatorPage() Page {
 													},
 												},
 												Text: "÷",
+											},
+										},
+									},
+								},
+							},
+							{
+								Type: "View",
+								Props: map[string]interface{}{
+									"style": map[string]interface{}{
+										"flexDirection":  "row",
+										"justifyContent": "space-around",
+										"marginBottom":   20,
+									},
+								},
+								Children: []Component{
+									{
+										Type: "TouchableOpacity",
+										Props: map[string]interface{}{
+											"style": map[string]interface{}{
+												"backgroundColor": "#9B59B6",
+												"padding":         15,
+												"borderRadius":    5,
+												"minWidth":        60,
+											},
+										},
+										Actions: map[string]string{
+											"onPress": "power",
+										},
+										Children: []Component{
+											{
+												Type: "Text",
+												Props: map[string]interface{}{
+													"style": map[string]interface{}{
+														"color":      "white",
+														"textAlign":  "center",
+														"fontWeight": "bold",
+													},
+												},
+												Text: "^",
+											},
+										},
+									},
+									{
+										Type: "TouchableOpacity",
+										Props: map[string]interface{}{
+											"style": map[string]interface{}{
+												"backgroundColor": "#E67E22",
+												"padding":         15,
+												"borderRadius":    5,
+												"minWidth":        60,
+											},
+										},
+										Actions: map[string]string{
+											"onPress": "sqrt",
+										},
+										Children: []Component{
+											{
+												Type: "Text",
+												Props: map[string]interface{}{
+													"style": map[string]interface{}{
+														"color":      "white",
+														"textAlign":  "center",
+														"fontWeight": "bold",
+													},
+												},
+												Text: "√",
+											},
+										},
+									},
+									{
+										Type: "TouchableOpacity",
+										Props: map[string]interface{}{
+											"style": map[string]interface{}{
+												"backgroundColor": "#1ABC9C",
+												"padding":         15,
+												"borderRadius":    5,
+												"minWidth":        60,
+											},
+										},
+										Actions: map[string]string{
+											"onPress": "random",
+										},
+										Children: []Component{
+											{
+												Type: "Text",
+												Props: map[string]interface{}{
+													"style": map[string]interface{}{
+														"color":      "white",
+														"textAlign":  "center",
+														"fontWeight": "bold",
+													},
+												},
+												Text: "RND",
+											},
+										},
+									},
+									{
+										Type: "TouchableOpacity",
+										Props: map[string]interface{}{
+											"style": map[string]interface{}{
+												"backgroundColor": "#E74C3C",
+												"padding":         15,
+												"borderRadius":    5,
+												"minWidth":        60,
+											},
+										},
+										Actions: map[string]string{
+											"onPress": "clear",
+										},
+										Children: []Component{
+											{
+												Type: "Text",
+												Props: map[string]interface{}{
+													"style": map[string]interface{}{
+														"color":      "white",
+														"textAlign":  "center",
+														"fontWeight": "bold",
+													},
+												},
+												Text: "CLR",
 											},
 										},
 									},

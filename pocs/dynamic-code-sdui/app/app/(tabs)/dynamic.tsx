@@ -67,7 +67,7 @@ export default function DynamicPage() {
             <Text style={styles.loadingText}>Loading...</Text>
           </View>
         ) : currentPage ? (
-          <DynamicRenderer components={currentPage.components} />
+          <DynamicRenderer page={currentPage} />
         ) : (
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>No page loaded</Text>

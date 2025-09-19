@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,28 +10,92 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
-import { Component } from '../services/api';
+import { Component, Page } from '../services/api';
 
 interface DynamicRendererProps {
-  components: Component[];
+  page: Page;
 }
 
 interface ActionHandlers {
   [key: string]: (params?: any) => void;
 }
 
-export default function DynamicRenderer({ components }: DynamicRendererProps) {
+export default function DynamicRenderer({ page }: DynamicRendererProps) {
   const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
   const [notes, setNotes] = useState<Array<{ title: string; content: string }>>([]);
   const [result, setResult] = useState<string>('Result will appear here');
+  const [dynamicFunctions, setDynamicFunctions] = useState<{ [key: string]: Function }>({});
 
   const inputRefs = useRef<{ [key: string]: TextInput | null }>({});
 
+  // Execute dynamic JavaScript code from backend
+  useEffect(() => {
+    if (page.code) {
+      try {
+        // Create a safe evaluation context
+        const context = {
+          Math,
+          parseFloat,
+          parseInt,
+          isNaN,
+          console: {
+            log: (msg: any) => console.log('[Dynamic Code]:', msg),
+            error: (msg: any) => console.error('[Dynamic Code]:', msg),
+          },
+        };
+
+        // Create a function that captures the dynamic functions
+        const dynamicFunctionCapture: { [key: string]: Function } = {};
+
+        // Execute the code in a controlled context
+        const wrappedCode = `
+          ${page.code}
+
+          // Capture functions for use
+          if (typeof performCalculation !== 'undefined') {
+            dynamicFunctionCapture.performCalculation = performCalculation;
+          }
+          if (typeof getRandomNumber !== 'undefined') {
+            dynamicFunctionCapture.getRandomNumber = getRandomNumber;
+          }
+          if (typeof clearInputs !== 'undefined') {
+            dynamicFunctionCapture.clearInputs = clearInputs;
+          }
+        `;
+
+        // Use Function constructor for safer evaluation than eval
+        const executeCode = new Function(
+          'Math', 'parseFloat', 'parseInt', 'isNaN', 'console', 'dynamicFunctionCapture',
+          wrappedCode
+        );
+
+        executeCode(
+          context.Math,
+          context.parseFloat,
+          context.parseInt,
+          context.isNaN,
+          context.console,
+          dynamicFunctionCapture
+        );
+
+        setDynamicFunctions(dynamicFunctionCapture);
+        console.log('Dynamic functions loaded:', Object.keys(dynamicFunctionCapture));
+      } catch (error) {
+        console.error('Error executing dynamic code:', error);
+        Alert.alert('Code Execution Error', 'Failed to load dynamic functionality');
+      }
+    }
+  }, [page.code]);
+
   const actionHandlers: ActionHandlers = {
-    add: () => performCalculation('add'),
-    subtract: () => performCalculation('subtract'),
-    multiply: () => performCalculation('multiply'),
-    divide: () => performCalculation('divide'),
+    add: () => useDynamicCalculation('add'),
+    subtract: () => useDynamicCalculation('subtract'),
+    multiply: () => useDynamicCalculation('multiply'),
+    divide: () => useDynamicCalculation('divide'),
+    power: () => useDynamicCalculation('power'),
+    sqrt: () => useDynamicCalculation('sqrt'),
+    random: () => handleRandomNumber(),
+    clear: () => handleClearInputs(),
     saveNote: () => {
       const title = inputValues.noteTitle?.trim();
       const content = inputValues.noteContent?.trim();
@@ -54,6 +118,70 @@ export default function DynamicRenderer({ components }: DynamicRendererProps) {
 
       Alert.alert('Success', 'Note saved successfully!');
     },
+  };
+
+  // Helper function to use dynamic calculation from backend
+  const useDynamicCalculation = (operation: string) => {
+    if (dynamicFunctions.performCalculation) {
+      try {
+        const result = dynamicFunctions.performCalculation(operation, inputValues.num1, inputValues.num2);
+        setResult(result);
+      } catch (error) {
+        console.error('Dynamic calculation error:', error);
+        // Fallback to static calculation
+        performCalculation(operation);
+      }
+    } else {
+      // Fallback to static calculation
+      performCalculation(operation);
+    }
+  };
+
+  // Handler for random number button
+  const handleRandomNumber = () => {
+    if (dynamicFunctions.getRandomNumber) {
+      try {
+        const randomNum = dynamicFunctions.getRandomNumber();
+        setInputValues(prev => ({ ...prev, num1: randomNum.toString() }));
+        Alert.alert('Random Number', `Generated: ${randomNum}`);
+      } catch (error) {
+        console.error('Random number error:', error);
+        Alert.alert('Error', 'Failed to generate random number');
+      }
+    } else {
+      // Fallback static random
+      const randomNum = Math.floor(Math.random() * 100) + 1;
+      setInputValues(prev => ({ ...prev, num1: randomNum.toString() }));
+      Alert.alert('Random Number', `Generated: ${randomNum}`);
+    }
+  };
+
+  // Handler for clear button
+  const handleClearInputs = () => {
+    if (dynamicFunctions.clearInputs) {
+      try {
+        const clearResult = dynamicFunctions.clearInputs();
+        setInputValues({ num1: '', num2: '' });
+        setResult(clearResult.result);
+
+        // Clear the input fields
+        if (inputRefs.current.num1) {
+          inputRefs.current.num1.clear();
+        }
+        if (inputRefs.current.num2) {
+          inputRefs.current.num2.clear();
+        }
+      } catch (error) {
+        console.error('Clear inputs error:', error);
+        // Fallback static clear
+        setInputValues({ num1: '', num2: '' });
+        setResult('Result cleared');
+      }
+    } else {
+      // Fallback static clear
+      setInputValues({ num1: '', num2: '' });
+      setResult('Result cleared');
+    }
   };
 
   const performCalculation = (operation: string) => {
@@ -207,7 +335,7 @@ export default function DynamicRenderer({ components }: DynamicRendererProps) {
 
   return (
     <View style={styles.container}>
-      {components.map((component, index) => renderComponent(component, index))}
+      {page.components.map((component, index) => renderComponent(component, index))}
     </View>
   );
 }

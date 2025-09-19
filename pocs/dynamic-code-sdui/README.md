@@ -27,10 +27,12 @@ A mobile application built with React Native and Go backend that demonstrates se
 ## Features
 
 - **Dynamic UI Rendering**: All UI components are fetched from the backend
+- **Dynamic Code Execution**: JavaScript code is served from backend and executed in React Native
 - **Multiple Page Types**: Header, Footer, Calculator, Notes, Info pages
-- **Interactive Components**: Calculator with arithmetic operations
+- **Interactive Components**: Calculator with arithmetic operations including power, square root, random numbers
 - **Note Taking**: Save and display notes dynamically
 - **Real-time Updates**: UI changes without app redeployment
+- **Safe Code Evaluation**: Dynamic code runs in controlled context with fallback implementations
 
 ## Available Pages
 
