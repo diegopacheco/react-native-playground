@@ -15,49 +15,60 @@ interface DynamicRendererProps {
 }
 
 export default function DynamicRenderer({ page }: DynamicRendererProps) {
-  try {
-    // Since the backend now returns the component invocation, just execute it directly
-    const executeCode = new Function(
-      'React', 'View', 'Text', 'TextInput', 'TouchableOpacity', 'ScrollView', 'Alert',
-      'Math', 'parseFloat', 'parseInt', 'isNaN', 'console',
-      page.code
-    );
+  // Create a stable component function that won't change on re-renders
+  const DynamicComponent = React.useMemo(() => {
+    try {
+      // Execute the code to get the component function
+      const executeCode = new Function(
+        'React', 'View', 'Text', 'TextInput', 'TouchableOpacity', 'ScrollView', 'Alert',
+        'Math', 'parseFloat', 'parseInt', 'isNaN', 'console',
+        `
+          ${page.code.replace('return CalculatorComponent();', 'return CalculatorComponent;')
+                     .replace('return HeaderComponent();', 'return HeaderComponent;')
+                     .replace('return FooterComponent();', 'return FooterComponent;')
+                     .replace('return NotesComponent();', 'return NotesComponent;')
+                     .replace('return InfoComponent();', 'return InfoComponent;')}
+        `
+      );
 
-    const result = executeCode(
-      React,
-      View,
-      Text,
-      TextInput,
-      TouchableOpacity,
-      ScrollView,
-      Alert,
-      Math,
-      parseFloat,
-      parseInt,
-      isNaN,
-      {
-        log: (msg: any) => console.log('[Dynamic Component]:', msg),
-        error: (msg: any) => console.error('[Dynamic Component]:', msg),
-      }
-    );
+      const ComponentFunction = executeCode(
+        React,
+        View,
+        Text,
+        TextInput,
+        TouchableOpacity,
+        ScrollView,
+        Alert,
+        Math,
+        parseFloat,
+        parseInt,
+        isNaN,
+        {
+          log: (msg: any) => console.log('[Dynamic Component]:', msg),
+          error: (msg: any) => console.error('[Dynamic Component]:', msg),
+        }
+      );
 
-    // The result should be a React element, return it directly
-    return result;
+      return ComponentFunction;
+    } catch (error) {
+      console.error('Error creating dynamic component:', error);
+      // eslint-disable-next-line react/display-name
+      return () => (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorTitle}>Dynamic Code Error</Text>
+          <Text style={styles.errorMessage}>
+            Failed to create dynamic component from backend.
+          </Text>
+          <Text style={styles.errorDetails}>
+            {error instanceof Error ? error.message : 'Unknown error'}
+          </Text>
+        </View>
+      );
+    }
+  }, [page.code]);
 
-  } catch (error) {
-    console.error('Error executing dynamic code:', error);
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorTitle}>Dynamic Code Error</Text>
-        <Text style={styles.errorMessage}>
-          Failed to execute dynamic component code from backend.
-        </Text>
-        <Text style={styles.errorDetails}>
-          {error instanceof Error ? error.message : 'Unknown error'}
-        </Text>
-      </View>
-    );
-  }
+  // Render the stable component
+  return React.createElement(DynamicComponent);
 }
 
 const styles = StyleSheet.create({
