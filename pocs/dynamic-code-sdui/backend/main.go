@@ -7,19 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Component struct {
-	Type     string                 `json:"type"`
-	Props    map[string]interface{} `json:"props,omitempty"`
-	Children []Component            `json:"children,omitempty"`
-	Text     string                 `json:"text,omitempty"`
-	Actions  map[string]string      `json:"actions,omitempty"`
-	Code     string                 `json:"code,omitempty"`
-}
-
 type Page struct {
-	Name       string      `json:"name"`
-	Components []Component `json:"components"`
-	Code       string      `json:"code,omitempty"`
+	Name string `json:"name"`
+	Code string `json:"code"`
 }
 
 func main() {
@@ -62,840 +52,459 @@ func getPage(c *gin.Context) {
 }
 
 func getHeaderPage() Page {
+	headerCode := `
+const HeaderComponent = () => {
+  return React.createElement(View, {
+    style: { backgroundColor: '#4A90E2', padding: 20, alignItems: 'center' }
+  },
+    React.createElement(Text, {
+      style: { color: 'white', fontSize: 24, fontWeight: 'bold' }
+    }, 'Dynamic App Header')
+  );
+};
+
+return HeaderComponent();
+`
 	return Page{
 		Name: "header",
-		Components: []Component{
-			{
-				Type: "View",
-				Props: map[string]interface{}{
-					"style": map[string]interface{}{
-						"backgroundColor": "#4A90E2",
-						"padding":         20,
-						"alignItems":      "center",
-					},
-				},
-				Children: []Component{
-					{
-						Type: "Text",
-						Props: map[string]interface{}{
-							"style": map[string]interface{}{
-								"color":      "white",
-								"fontSize":   24,
-								"fontWeight": "bold",
-							},
-						},
-						Text: "Dynamic App Header",
-					},
-				},
-			},
-		},
+		Code: headerCode,
 	}
 }
 
 func getFooterPage() Page {
+	footerCode := `
+const FooterComponent = () => {
+  return React.createElement(View, {
+    style: { backgroundColor: '#333', padding: 15, alignItems: 'center' }
+  },
+    React.createElement(Text, {
+      style: { color: 'white', fontSize: 12 }
+    }, '© 2025 Dynamic App - Diego Pacheco')
+  );
+};
+
+return FooterComponent();
+`
 	return Page{
 		Name: "footer",
-		Components: []Component{
-			{
-				Type: "View",
-				Props: map[string]interface{}{
-					"style": map[string]interface{}{
-						"backgroundColor": "#333",
-						"padding":         15,
-						"alignItems":      "center",
-					},
-				},
-				Children: []Component{
-					{
-						Type: "Text",
-						Props: map[string]interface{}{
-							"style": map[string]interface{}{
-								"color":    "white",
-								"fontSize": 12,
-							},
-						},
-						Text: "© 2025 Dynamic App - Diego Pacheco",
-					},
-				},
-			},
-		},
+		Code: footerCode,
 	}
 }
 
 func getCalculatorPage() Page {
 	calculatorCode := `
-// Dynamic Calculator Logic from Backend
-const performCalculation = (operation, num1, num2) => {
-  const n1 = parseFloat(num1 || '0');
-  const n2 = parseFloat(num2 || '0');
+const CalculatorComponent = () => {
+  const [inputValues, setInputValues] = React.useState({});
+  const [result, setResult] = React.useState('Result will appear here');
+  const inputRefs = React.useRef({});
 
-  if (isNaN(n1) || isNaN(n2)) {
-    return 'Error: Please enter valid numbers';
-  }
+  const performCalculation = (operation, num1, num2) => {
+    const n1 = parseFloat(num1 || '0');
+    const n2 = parseFloat(num2 || '0');
 
-  let result;
-  let symbol;
+    if (isNaN(n1) || isNaN(n2)) {
+      return 'Error: Please enter valid numbers';
+    }
 
-  switch (operation) {
-    case 'add':
-      result = n1 + n2;
-      symbol = '+';
-      break;
-    case 'subtract':
-      result = n1 - n2;
-      symbol = '-';
-      break;
-    case 'multiply':
-      result = n1 * n2;
-      symbol = '×';
-      break;
-    case 'divide':
-      if (n2 === 0) {
-        return 'Error: Cannot divide by zero';
-      }
-      result = n1 / n2;
-      symbol = '÷';
-      break;
-    case 'power':
-      result = Math.pow(n1, n2);
-      symbol = '^';
-      break;
-    case 'sqrt':
-      if (n1 < 0) {
-        return 'Error: Cannot take square root of negative number';
-      }
-      result = Math.sqrt(n1);
-      return 'sqrt(' + n1 + ') = ' + result.toFixed(4);
-    default:
-      return 'Error: Unknown operation';
-  }
+    let calcResult;
+    let symbol;
 
-  return n1 + ' ' + symbol + ' ' + n2 + ' = ' + result;
+    switch (operation) {
+      case 'add':
+        calcResult = n1 + n2;
+        symbol = '+';
+        break;
+      case 'subtract':
+        calcResult = n1 - n2;
+        symbol = '-';
+        break;
+      case 'multiply':
+        calcResult = n1 * n2;
+        symbol = '×';
+        break;
+      case 'divide':
+        if (n2 === 0) {
+          return 'Error: Cannot divide by zero';
+        }
+        calcResult = n1 / n2;
+        symbol = '÷';
+        break;
+      case 'power':
+        calcResult = Math.pow(n1, n2);
+        symbol = '^';
+        break;
+      case 'sqrt':
+        if (n1 < 0) {
+          return 'Error: Cannot take square root of negative number';
+        }
+        calcResult = Math.sqrt(n1);
+        return 'sqrt(' + n1 + ') = ' + calcResult.toFixed(4);
+      default:
+        return 'Error: Unknown operation';
+    }
+
+    return n1 + ' ' + symbol + ' ' + n2 + ' = ' + calcResult;
+  };
+
+  const handleCalculation = (operation) => {
+    const resultText = performCalculation(operation, inputValues.num1, inputValues.num2);
+    setResult(resultText);
+  };
+
+  const handleRandomNumber = () => {
+    const randomNum = Math.floor(Math.random() * 100) + 1;
+    setInputValues(prev => ({ ...prev, num1: randomNum.toString() }));
+    Alert.alert('Random Number', 'Generated: ' + randomNum);
+  };
+
+  const handleClear = () => {
+    setInputValues({});
+    setResult('Result cleared');
+    if (inputRefs.current.num1) {
+      inputRefs.current.num1.clear();
+    }
+    if (inputRefs.current.num2) {
+      inputRefs.current.num2.clear();
+    }
+  };
+
+  const handleInputChange = (id, value) => {
+    setInputValues(prev => ({ ...prev, [id]: value }));
+  };
+
+  return React.createElement(ScrollView, {
+    style: { flex: 1, backgroundColor: '#f5f5f5' }
+  },
+    React.createElement(View, { style: { padding: 20 } },
+
+      React.createElement(Text, {
+        style: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 30 }
+      }, 'Dynamic Calculator'),
+
+      React.createElement(TextInput, {
+        ref: (ref) => { inputRefs.current.num1 = ref; },
+        style: {
+          borderWidth: 1, borderColor: '#ccc', padding: 15, marginBottom: 10,
+          backgroundColor: 'white', fontSize: 18, textAlign: 'center'
+        },
+        placeholder: 'Enter first number',
+        keyboardType: 'numeric',
+        value: inputValues.num1 || '',
+        onChangeText: (value) => handleInputChange('num1', value)
+      }),
+
+      React.createElement(TextInput, {
+        ref: (ref) => { inputRefs.current.num2 = ref; },
+        style: {
+          borderWidth: 1, borderColor: '#ccc', padding: 15, marginBottom: 20,
+          backgroundColor: 'white', fontSize: 18, textAlign: 'center'
+        },
+        placeholder: 'Enter second number',
+        keyboardType: 'numeric',
+        value: inputValues.num2 || '',
+        onChangeText: (value) => handleInputChange('num2', value)
+      }),
+
+      React.createElement(View, {
+        style: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 20 }
+      },
+        React.createElement(TouchableOpacity, {
+          style: { backgroundColor: '#4A90E2', padding: 15, borderRadius: 5, minWidth: 60 },
+          onPress: () => handleCalculation('add')
+        },
+          React.createElement(Text, {
+            style: { color: 'white', textAlign: 'center', fontWeight: 'bold' }
+          }, '+')
+        ),
+        React.createElement(TouchableOpacity, {
+          style: { backgroundColor: '#E74C3C', padding: 15, borderRadius: 5, minWidth: 60 },
+          onPress: () => handleCalculation('subtract')
+        },
+          React.createElement(Text, {
+            style: { color: 'white', textAlign: 'center', fontWeight: 'bold' }
+          }, '-')
+        ),
+        React.createElement(TouchableOpacity, {
+          style: { backgroundColor: '#27AE60', padding: 15, borderRadius: 5, minWidth: 60 },
+          onPress: () => handleCalculation('multiply')
+        },
+          React.createElement(Text, {
+            style: { color: 'white', textAlign: 'center', fontWeight: 'bold' }
+          }, '×')
+        ),
+        React.createElement(TouchableOpacity, {
+          style: { backgroundColor: '#F39C12', padding: 15, borderRadius: 5, minWidth: 60 },
+          onPress: () => handleCalculation('divide')
+        },
+          React.createElement(Text, {
+            style: { color: 'white', textAlign: 'center', fontWeight: 'bold' }
+          }, '÷')
+        )
+      ),
+
+      React.createElement(View, {
+        style: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 20 }
+      },
+        React.createElement(TouchableOpacity, {
+          style: { backgroundColor: '#9B59B6', padding: 15, borderRadius: 5, minWidth: 60 },
+          onPress: () => handleCalculation('power')
+        },
+          React.createElement(Text, {
+            style: { color: 'white', textAlign: 'center', fontWeight: 'bold' }
+          }, '^')
+        ),
+        React.createElement(TouchableOpacity, {
+          style: { backgroundColor: '#E67E22', padding: 15, borderRadius: 5, minWidth: 60 },
+          onPress: () => handleCalculation('sqrt')
+        },
+          React.createElement(Text, {
+            style: { color: 'white', textAlign: 'center', fontWeight: 'bold' }
+          }, '√')
+        ),
+        React.createElement(TouchableOpacity, {
+          style: { backgroundColor: '#1ABC9C', padding: 15, borderRadius: 5, minWidth: 60 },
+          onPress: handleRandomNumber
+        },
+          React.createElement(Text, {
+            style: { color: 'white', textAlign: 'center', fontWeight: 'bold' }
+          }, 'RND')
+        ),
+        React.createElement(TouchableOpacity, {
+          style: { backgroundColor: '#E74C3C', padding: 15, borderRadius: 5, minWidth: 60 },
+          onPress: handleClear
+        },
+          React.createElement(Text, {
+            style: { color: 'white', textAlign: 'center', fontWeight: 'bold' }
+          }, 'CLR')
+        )
+      ),
+
+      React.createElement(View, {
+        style: {
+          backgroundColor: 'white', padding: 20, borderRadius: 10, marginTop: 20
+        }
+      },
+        React.createElement(Text, {
+          style: { fontSize: 20, fontWeight: 'bold', textAlign: 'center' }
+        }, result)
+      )
+    )
+  );
 };
 
-const getRandomNumber = () => {
-  return Math.floor(Math.random() * 100) + 1;
-};
-
-const clearInputs = () => {
-  return { num1: '', num2: '', result: 'Result cleared' };
-};
+return CalculatorComponent();
 `
 
 	return Page{
 		Name: "page_calculator",
 		Code: calculatorCode,
-		Components: []Component{
-			{
-				Type: "ScrollView",
-				Props: map[string]interface{}{
-					"style": map[string]interface{}{
-						"flex":            1,
-						"backgroundColor": "#f5f5f5",
-					},
-				},
-				Children: []Component{
-					{
-						Type: "View",
-						Props: map[string]interface{}{
-							"style": map[string]interface{}{
-								"padding": 20,
-							},
-						},
-						Children: []Component{
-							{
-								Type: "Text",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"fontSize":     28,
-										"fontWeight":   "bold",
-										"textAlign":    "center",
-										"marginBottom": 30,
-									},
-								},
-								Text: "Calculator",
-							},
-							{
-								Type: "TextInput",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"borderWidth":     1,
-										"borderColor":     "#ccc",
-										"padding":         15,
-										"marginBottom":    10,
-										"backgroundColor": "white",
-										"fontSize":        18,
-										"textAlign":       "center",
-									},
-									"placeholder":  "Enter first number",
-									"keyboardType": "numeric",
-									"id":           "num1",
-								},
-							},
-							{
-								Type: "TextInput",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"borderWidth":     1,
-										"borderColor":     "#ccc",
-										"padding":         15,
-										"marginBottom":    20,
-										"backgroundColor": "white",
-										"fontSize":        18,
-										"textAlign":       "center",
-									},
-									"placeholder":  "Enter second number",
-									"keyboardType": "numeric",
-									"id":           "num2",
-								},
-							},
-							{
-								Type: "View",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"flexDirection":  "row",
-										"justifyContent": "space-around",
-										"marginBottom":   20,
-									},
-								},
-								Children: []Component{
-									{
-										Type: "TouchableOpacity",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"backgroundColor": "#4A90E2",
-												"padding":         15,
-												"borderRadius":    5,
-												"minWidth":        60,
-											},
-										},
-										Actions: map[string]string{
-											"onPress": "add",
-										},
-										Children: []Component{
-											{
-												Type: "Text",
-												Props: map[string]interface{}{
-													"style": map[string]interface{}{
-														"color":      "white",
-														"textAlign":  "center",
-														"fontWeight": "bold",
-													},
-												},
-												Text: "+",
-											},
-										},
-									},
-									{
-										Type: "TouchableOpacity",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"backgroundColor": "#E74C3C",
-												"padding":         15,
-												"borderRadius":    5,
-												"minWidth":        60,
-											},
-										},
-										Actions: map[string]string{
-											"onPress": "subtract",
-										},
-										Children: []Component{
-											{
-												Type: "Text",
-												Props: map[string]interface{}{
-													"style": map[string]interface{}{
-														"color":      "white",
-														"textAlign":  "center",
-														"fontWeight": "bold",
-													},
-												},
-												Text: "-",
-											},
-										},
-									},
-									{
-										Type: "TouchableOpacity",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"backgroundColor": "#27AE60",
-												"padding":         15,
-												"borderRadius":    5,
-												"minWidth":        60,
-											},
-										},
-										Actions: map[string]string{
-											"onPress": "multiply",
-										},
-										Children: []Component{
-											{
-												Type: "Text",
-												Props: map[string]interface{}{
-													"style": map[string]interface{}{
-														"color":      "white",
-														"textAlign":  "center",
-														"fontWeight": "bold",
-													},
-												},
-												Text: "×",
-											},
-										},
-									},
-									{
-										Type: "TouchableOpacity",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"backgroundColor": "#F39C12",
-												"padding":         15,
-												"borderRadius":    5,
-												"minWidth":        60,
-											},
-										},
-										Actions: map[string]string{
-											"onPress": "divide",
-										},
-										Children: []Component{
-											{
-												Type: "Text",
-												Props: map[string]interface{}{
-													"style": map[string]interface{}{
-														"color":      "white",
-														"textAlign":  "center",
-														"fontWeight": "bold",
-													},
-												},
-												Text: "÷",
-											},
-										},
-									},
-								},
-							},
-							{
-								Type: "View",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"flexDirection":  "row",
-										"justifyContent": "space-around",
-										"marginBottom":   20,
-									},
-								},
-								Children: []Component{
-									{
-										Type: "TouchableOpacity",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"backgroundColor": "#9B59B6",
-												"padding":         15,
-												"borderRadius":    5,
-												"minWidth":        60,
-											},
-										},
-										Actions: map[string]string{
-											"onPress": "power",
-										},
-										Children: []Component{
-											{
-												Type: "Text",
-												Props: map[string]interface{}{
-													"style": map[string]interface{}{
-														"color":      "white",
-														"textAlign":  "center",
-														"fontWeight": "bold",
-													},
-												},
-												Text: "^",
-											},
-										},
-									},
-									{
-										Type: "TouchableOpacity",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"backgroundColor": "#E67E22",
-												"padding":         15,
-												"borderRadius":    5,
-												"minWidth":        60,
-											},
-										},
-										Actions: map[string]string{
-											"onPress": "sqrt",
-										},
-										Children: []Component{
-											{
-												Type: "Text",
-												Props: map[string]interface{}{
-													"style": map[string]interface{}{
-														"color":      "white",
-														"textAlign":  "center",
-														"fontWeight": "bold",
-													},
-												},
-												Text: "√",
-											},
-										},
-									},
-									{
-										Type: "TouchableOpacity",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"backgroundColor": "#1ABC9C",
-												"padding":         15,
-												"borderRadius":    5,
-												"minWidth":        60,
-											},
-										},
-										Actions: map[string]string{
-											"onPress": "random",
-										},
-										Children: []Component{
-											{
-												Type: "Text",
-												Props: map[string]interface{}{
-													"style": map[string]interface{}{
-														"color":      "white",
-														"textAlign":  "center",
-														"fontWeight": "bold",
-													},
-												},
-												Text: "RND",
-											},
-										},
-									},
-									{
-										Type: "TouchableOpacity",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"backgroundColor": "#E74C3C",
-												"padding":         15,
-												"borderRadius":    5,
-												"minWidth":        60,
-											},
-										},
-										Actions: map[string]string{
-											"onPress": "clear",
-										},
-										Children: []Component{
-											{
-												Type: "Text",
-												Props: map[string]interface{}{
-													"style": map[string]interface{}{
-														"color":      "white",
-														"textAlign":  "center",
-														"fontWeight": "bold",
-													},
-												},
-												Text: "CLR",
-											},
-										},
-									},
-								},
-							},
-							{
-								Type: "View",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"backgroundColor": "white",
-										"padding":         20,
-										"borderRadius":    10,
-										"marginTop":       20,
-									},
-								},
-								Children: []Component{
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":   20,
-												"fontWeight": "bold",
-												"textAlign":  "center",
-											},
-											"id": "result",
-										},
-										Text: "Result will appear here",
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
 	}
 }
 
 func getNotePagePage() Page {
+	notesCode := `
+const NotesComponent = () => {
+  const [inputValues, setInputValues] = React.useState({});
+  const [notes, setNotes] = React.useState([]);
+  const inputRefs = React.useRef({});
+
+  const handleInputChange = (id, value) => {
+    setInputValues(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleSaveNote = () => {
+    const title = inputValues.noteTitle?.trim();
+    const content = inputValues.noteContent?.trim();
+
+    if (!title || !content) {
+      Alert.alert('Error', 'Please enter both title and content');
+      return;
+    }
+
+    setNotes(prev => [...prev, { title, content }]);
+    setInputValues({});
+
+    if (inputRefs.current.noteTitle) {
+      inputRefs.current.noteTitle.clear();
+    }
+    if (inputRefs.current.noteContent) {
+      inputRefs.current.noteContent.clear();
+    }
+
+    Alert.alert('Success', 'Note saved successfully!');
+  };
+
+  return React.createElement(ScrollView, {
+    style: { flex: 1, backgroundColor: '#f8f9fa' }
+  },
+    React.createElement(View, { style: { padding: 20 } },
+
+      React.createElement(Text, {
+        style: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 30, color: '#333' }
+      }, 'My Notes'),
+
+      React.createElement(TextInput, {
+        ref: (ref) => { inputRefs.current.noteTitle = ref; },
+        style: {
+          borderWidth: 1, borderColor: '#ddd', padding: 15, marginBottom: 15,
+          backgroundColor: 'white', fontSize: 16, borderRadius: 8
+        },
+        placeholder: 'Note title',
+        value: inputValues.noteTitle || '',
+        onChangeText: (value) => handleInputChange('noteTitle', value)
+      }),
+
+      React.createElement(TextInput, {
+        ref: (ref) => { inputRefs.current.noteContent = ref; },
+        style: {
+          borderWidth: 1, borderColor: '#ddd', padding: 15, marginBottom: 20,
+          backgroundColor: 'white', fontSize: 16, height: 120, borderRadius: 8,
+          textAlignVertical: 'top'
+        },
+        placeholder: 'Write your note here...',
+        multiline: true,
+        value: inputValues.noteContent || '',
+        onChangeText: (value) => handleInputChange('noteContent', value)
+      }),
+
+      React.createElement(TouchableOpacity, {
+        style: {
+          backgroundColor: '#007AFF', padding: 15, borderRadius: 8,
+          alignItems: 'center', marginBottom: 30
+        },
+        onPress: handleSaveNote
+      },
+        React.createElement(Text, {
+          style: { color: 'white', fontSize: 16, fontWeight: 'bold' }
+        }, 'Save Note')
+      ),
+
+      React.createElement(View, {
+        style: { backgroundColor: 'white', padding: 20, borderRadius: 10, marginBottom: 20 }
+      },
+        React.createElement(Text, {
+          style: { fontSize: 18, fontWeight: 'bold', marginBottom: 15 }
+        }, 'Saved Notes'),
+
+        notes.length === 0 ?
+          React.createElement(Text, {
+            style: { fontSize: 14, color: '#666', fontStyle: 'italic' }
+          }, 'No notes saved yet. Create your first note above!') :
+          React.createElement(View, {},
+            ...notes.map((note, index) =>
+              React.createElement(View, {
+                key: index,
+                style: {
+                  backgroundColor: '#f9f9f9', padding: 15, marginBottom: 10,
+                  borderRadius: 8, borderLeftWidth: 3, borderLeftColor: '#007AFF'
+                }
+              },
+                React.createElement(Text, {
+                  style: { fontSize: 16, fontWeight: 'bold', marginBottom: 5, color: '#333' }
+                }, note.title),
+                React.createElement(Text, {
+                  style: { fontSize: 14, color: '#666', lineHeight: 20 }
+                }, note.content)
+              )
+            )
+          )
+      )
+    )
+  );
+};
+
+return NotesComponent();
+`
+
 	return Page{
 		Name: "page_note_page",
-		Components: []Component{
-			{
-				Type: "ScrollView",
-				Props: map[string]interface{}{
-					"style": map[string]interface{}{
-						"flex":            1,
-						"backgroundColor": "#f8f9fa",
-					},
-				},
-				Children: []Component{
-					{
-						Type: "View",
-						Props: map[string]interface{}{
-							"style": map[string]interface{}{
-								"padding": 20,
-							},
-						},
-						Children: []Component{
-							{
-								Type: "Text",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"fontSize":     28,
-										"fontWeight":   "bold",
-										"textAlign":    "center",
-										"marginBottom": 30,
-										"color":        "#333",
-									},
-								},
-								Text: "My Notes",
-							},
-							{
-								Type: "TextInput",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"borderWidth":     1,
-										"borderColor":     "#ddd",
-										"padding":         15,
-										"marginBottom":    15,
-										"backgroundColor": "white",
-										"fontSize":        16,
-										"borderRadius":    8,
-									},
-									"placeholder": "Note title",
-									"id":          "noteTitle",
-								},
-							},
-							{
-								Type: "TextInput",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"borderWidth":       1,
-										"borderColor":       "#ddd",
-										"padding":           15,
-										"marginBottom":      20,
-										"backgroundColor":   "white",
-										"fontSize":          16,
-										"height":            120,
-										"borderRadius":      8,
-										"textAlignVertical": "top",
-									},
-									"placeholder": "Write your note here...",
-									"multiline":   true,
-									"id":          "noteContent",
-								},
-							},
-							{
-								Type: "TouchableOpacity",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"backgroundColor": "#007AFF",
-										"padding":         15,
-										"borderRadius":    8,
-										"alignItems":      "center",
-										"marginBottom":    30,
-									},
-								},
-								Actions: map[string]string{
-									"onPress": "saveNote",
-								},
-								Children: []Component{
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"color":      "white",
-												"fontSize":   16,
-												"fontWeight": "bold",
-											},
-										},
-										Text: "Save Note",
-									},
-								},
-							},
-							{
-								Type: "View",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"backgroundColor": "white",
-										"padding":         20,
-										"borderRadius":    10,
-										"marginBottom":    20,
-									},
-									"id": "notesList",
-								},
-								Children: []Component{
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":     18,
-												"fontWeight":   "bold",
-												"marginBottom": 15,
-											},
-										},
-										Text: "Saved Notes",
-									},
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":  14,
-												"color":     "#666",
-												"fontStyle": "italic",
-											},
-										},
-										Text: "No notes saved yet. Create your first note above!",
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
+		Code: notesCode,
 	}
 }
 
 func getInfoPage() Page {
+	infoCode := `
+const InfoComponent = () => {
+  return React.createElement(ScrollView, {
+    style: { flex: 1, backgroundColor: '#f0f0f0' }
+  },
+    React.createElement(View, { style: { padding: 20 } },
+
+      React.createElement(Text, {
+        style: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 30, color: '#333' }
+      }, 'App Information'),
+
+      React.createElement(View, {
+        style: {
+          backgroundColor: 'white', padding: 20, borderRadius: 10, marginBottom: 20,
+          shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1,
+          shadowRadius: 4, elevation: 3
+        }
+      },
+        React.createElement(Text, {
+          style: { fontSize: 20, fontWeight: 'bold', marginBottom: 10, color: '#4A90E2' }
+        }, 'About This App'),
+        React.createElement(Text, {
+          style: { fontSize: 16, lineHeight: 24, color: '#555' }
+        }, 'This is a dynamic server-driven UI application built with React Native and Go. The entire user interface AND React code is dynamically generated from the backend, allowing for real-time updates without app store deployments.')
+      ),
+
+      React.createElement(View, {
+        style: {
+          backgroundColor: 'white', padding: 20, borderRadius: 10, marginBottom: 20,
+          shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1,
+          shadowRadius: 4, elevation: 3
+        }
+      },
+        React.createElement(Text, {
+          style: { fontSize: 20, fontWeight: 'bold', marginBottom: 10, color: '#27AE60' }
+        }, 'Features'),
+        React.createElement(Text, {
+          style: { fontSize: 16, marginBottom: 8, color: '#555' }
+        }, '• Complete React components from backend'),
+        React.createElement(Text, {
+          style: { fontSize: 16, marginBottom: 8, color: '#555' }
+        }, '• Dynamic JavaScript code execution'),
+        React.createElement(Text, {
+          style: { fontSize: 16, marginBottom: 8, color: '#555' }
+        }, '• Zero hardcoded UI in mobile app'),
+        React.createElement(Text, {
+          style: { fontSize: 16, marginBottom: 8, color: '#555' }
+        }, '• Real-time code updates'),
+        React.createElement(Text, {
+          style: { fontSize: 16, color: '#555' }
+        }, '• Safe code execution environment')
+      ),
+
+      React.createElement(View, {
+        style: {
+          backgroundColor: 'white', padding: 20, borderRadius: 10,
+          shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1,
+          shadowRadius: 4, elevation: 3
+        }
+      },
+        React.createElement(Text, {
+          style: { fontSize: 20, fontWeight: 'bold', marginBottom: 10, color: '#E74C3C' }
+        }, 'Technical Stack'),
+        React.createElement(Text, {
+          style: { fontSize: 16, marginBottom: 8, color: '#555' }
+        }, 'Frontend: React Native + Dynamic Code Execution'),
+        React.createElement(Text, {
+          style: { fontSize: 16, marginBottom: 8, color: '#555' }
+        }, 'Backend: Go + Gin Gonic + React Code Generation'),
+        React.createElement(Text, {
+          style: { fontSize: 16, color: '#555' }
+        }, 'Architecture: True Server-Driven UI with Code')
+      )
+    )
+  );
+};
+
+return InfoComponent();
+`
+
 	return Page{
 		Name: "page_info",
-		Components: []Component{
-			{
-				Type: "ScrollView",
-				Props: map[string]interface{}{
-					"style": map[string]interface{}{
-						"flex":            1,
-						"backgroundColor": "#f0f0f0",
-					},
-				},
-				Children: []Component{
-					{
-						Type: "View",
-						Props: map[string]interface{}{
-							"style": map[string]interface{}{
-								"padding": 20,
-							},
-						},
-						Children: []Component{
-							{
-								Type: "Text",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"fontSize":     28,
-										"fontWeight":   "bold",
-										"textAlign":    "center",
-										"marginBottom": 30,
-										"color":        "#333",
-									},
-								},
-								Text: "App Information",
-							},
-							{
-								Type: "View",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"backgroundColor": "white",
-										"padding":         20,
-										"borderRadius":    10,
-										"marginBottom":    20,
-										"shadowColor":     "#000",
-										"shadowOffset": map[string]interface{}{
-											"width":  0,
-											"height": 2,
-										},
-										"shadowOpacity": 0.1,
-										"shadowRadius":  4,
-										"elevation":     3,
-									},
-								},
-								Children: []Component{
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":     20,
-												"fontWeight":   "bold",
-												"marginBottom": 10,
-												"color":        "#4A90E2",
-											},
-										},
-										Text: "About This App",
-									},
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":   16,
-												"lineHeight": 24,
-												"color":      "#555",
-											},
-										},
-										Text: "This is a dynamic server-driven UI application built with React Native and Go. The entire user interface is dynamically generated from the backend, allowing for real-time updates without app store deployments.",
-									},
-								},
-							},
-							{
-								Type: "View",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"backgroundColor": "white",
-										"padding":         20,
-										"borderRadius":    10,
-										"marginBottom":    20,
-										"shadowColor":     "#000",
-										"shadowOffset": map[string]interface{}{
-											"width":  0,
-											"height": 2,
-										},
-										"shadowOpacity": 0.1,
-										"shadowRadius":  4,
-										"elevation":     3,
-									},
-								},
-								Children: []Component{
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":     20,
-												"fontWeight":   "bold",
-												"marginBottom": 10,
-												"color":        "#27AE60",
-											},
-										},
-										Text: "Features",
-									},
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":     16,
-												"marginBottom": 8,
-												"color":        "#555",
-											},
-										},
-										Text: "• Dynamic UI components",
-									},
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":     16,
-												"marginBottom": 8,
-												"color":        "#555",
-											},
-										},
-										Text: "• Server-driven layout",
-									},
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":     16,
-												"marginBottom": 8,
-												"color":        "#555",
-											},
-										},
-										Text: "• Calculator functionality",
-									},
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":     16,
-												"marginBottom": 8,
-												"color":        "#555",
-											},
-										},
-										Text: "• Note-taking capabilities",
-									},
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize": 16,
-												"color":    "#555",
-											},
-										},
-										Text: "• Real-time updates",
-									},
-								},
-							},
-							{
-								Type: "View",
-								Props: map[string]interface{}{
-									"style": map[string]interface{}{
-										"backgroundColor": "white",
-										"padding":         20,
-										"borderRadius":    10,
-										"shadowColor":     "#000",
-										"shadowOffset": map[string]interface{}{
-											"width":  0,
-											"height": 2,
-										},
-										"shadowOpacity": 0.1,
-										"shadowRadius":  4,
-										"elevation":     3,
-									},
-								},
-								Children: []Component{
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":     20,
-												"fontWeight":   "bold",
-												"marginBottom": 10,
-												"color":        "#E74C3C",
-											},
-										},
-										Text: "Technical Stack",
-									},
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":     16,
-												"marginBottom": 8,
-												"color":        "#555",
-											},
-										},
-										Text: "Frontend: React Native + Expo",
-									},
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize":     16,
-												"marginBottom": 8,
-												"color":        "#555",
-											},
-										},
-										Text: "Backend: Go + Gin Gonic",
-									},
-									{
-										Type: "Text",
-										Props: map[string]interface{}{
-											"style": map[string]interface{}{
-												"fontSize": 16,
-												"color":    "#555",
-											},
-										},
-										Text: "Architecture: Server-Driven UI",
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
+		Code: infoCode,
 	}
 }
