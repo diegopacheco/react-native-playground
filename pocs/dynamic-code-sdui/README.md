@@ -172,71 +172,81 @@ The backend serves the following dynamic pages via `/api/page/{name}`:
 
 ### Backend (Go + Gin)
 
-The backend defines UI components as structured data:
+The backend serves complete JavaScript React component functions:
 
 ```go
-type Component struct {
-    Type       string                 `json:"type"`
-    Props      map[string]interface{} `json:"props,omitempty"`
-    Children   []Component            `json:"children,omitempty"`
-    Text       string                 `json:"text,omitempty"`
-    Actions    map[string]string      `json:"actions,omitempty"`
+type Page struct {
+    Name string `json:"name"`
+    Code string `json:"code"`
 }
 ```
 
-Each page returns a JSON structure describing the UI layout, styling, and interactions.
+Each page returns executable JavaScript code that creates React components using `React.createElement`. The code includes complete component logic, state management, and event handlers.
 
 ### Frontend (React Native)
 
 The `DynamicRenderer` component:
 
-1. Receives component data from the API
-2. Recursively renders React Native components
-3. Handles user interactions through action mappings
-4. Manages component state (calculator results, notes, etc.)
+1. Receives executable JavaScript code from the API
+2. Safely executes the code using Function constructor
+3. Creates stable component references using React.useMemo
+4. Renders the dynamically created React components
 
-### Component Mapping
+### Dynamic Code Execution
 
-- Backend `"View"` → React Native `<View>`
-- Backend `"Text"` → React Native `<Text>`
-- Backend `"TextInput"` → React Native `<TextInput>`
-- Backend `"TouchableOpacity"` → React Native `<TouchableOpacity>`
-- Backend `"ScrollView"` → React Native `<ScrollView>`
+The backend JavaScript code uses `React.createElement` to programmatically create React Native components:
+
+- `React.createElement(View, props, children)` creates `<View>` components
+- `React.createElement(Text, props, text)` creates `<Text>` components
+- `React.createElement(TextInput, props)` creates `<TextInput>` components
+- `React.createElement(TouchableOpacity, props, children)` creates `<TouchableOpacity>` components
+- `React.createElement(ScrollView, props, children)` creates `<ScrollView>` components
+
+All component logic, state management, and event handling is defined in the backend-served JavaScript code.
 
 ## API Endpoints
 
-- `GET /api/page/header` - Returns header component
-- `GET /api/page/footer` - Returns footer component
-- `GET /api/page/page_calculator` - Returns calculator page
-- `GET /api/page/page_note_page` - Returns notes page
-- `GET /api/page/page_info` - Returns info page
+- `GET /api/page/header` - Returns header component JavaScript code
+- `GET /api/page/footer` - Returns footer component JavaScript code
+- `GET /api/page/page_calculator` - Returns calculator page JavaScript code
+- `GET /api/page/page_note_page` - Returns notes page JavaScript code
+- `GET /api/page/page_info` - Returns info page JavaScript code
 
 ## Customization
 
 ### Adding New Pages
 
-1. **Backend**: Add a new case in `getPage()` function in `main.go`
+1. **Backend**: Add a new case in `getPage()` function in `main.go` with complete JavaScript component code
 2. **Frontend**: Add the page option to `pageOptions` array in `dynamic.tsx`
 
 ### Adding New Component Types
 
-1. **Backend**: Define component structure in page definitions
-2. **Frontend**: Add new case in `renderComponent()` method in `DynamicRenderer.tsx`
+1. **Backend**: Use `React.createElement` with the new component type in the JavaScript code
+2. **Frontend**: Ensure the component is available in the DynamicRenderer's execution context
 
-### Adding New Actions
+### Adding New Functionality
 
-1. **Backend**: Add action mappings in component definitions
-2. **Frontend**: Add action handlers to `actionHandlers` object in `DynamicRenderer.tsx`
+1. **Backend**: Write complete JavaScript functions including state management and event handlers
+2. **Frontend**: No changes needed - all logic is dynamically executed from backend code
 
 ## Development Notes
 
 - The backend must be running before starting the frontend
-- Changes to backend page definitions are reflected immediately in the app
+- Changes to backend JavaScript code are reflected immediately in the app
 - The app gracefully handles network errors and displays appropriate messages
-- All styling is defined in the backend and converted to React Native styles
+- All styling, logic, and state management is defined in the backend JavaScript code
+- The mobile app acts as a JavaScript runtime with React Native component rendering
 
 ## Troubleshooting
 
 - **"Failed to load page"**: Ensure backend server is running on localhost:8080
 - **Network errors**: Check that both frontend and backend are on the same network
-- **Styling issues**: Verify style objects in backend match React Native style properties
+- **JavaScript execution errors**: Check the DynamicRenderer error display for code execution issues
+- **Component state issues**: Ensure React hooks are used properly in backend JavaScript code
+
+## IF this would be production readfy...
+
+1. It would need to have fallbacks (what if page does not load)
+2. It would need cachee on the app.
+3. it would need encrypt the payload.
+4. require tests with more comkplex scenarios and deps
