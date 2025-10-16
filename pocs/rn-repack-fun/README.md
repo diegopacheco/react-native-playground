@@ -1,4 +1,17 @@
-# Server
+# Repack POC
+
+## Components Flow
+
+1. User navigates to Calculator screen
+2. RemoteLoader.createLazyRemoteComponent('Calculator')
+3. ScriptManager.loadScript('Calculator')
+4. Resolver: 'Calculator' → 'http://localhost:3000/chunks/Calculator.bundle.js'
+5. Native module fetches bundle (13.39 KB)
+6. Script executed, Calculator component available globally
+7. React renders Calculator component
+8. Cached in AsyncStorage for next time
+
+## Server
 
 run
 ```

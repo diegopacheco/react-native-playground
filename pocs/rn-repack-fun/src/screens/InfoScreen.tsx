@@ -1,10 +1,10 @@
 import React, { Suspense } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
-import { createRemoteLazyComponent } from '../utils/RemoteComponentLoader';
+import { RemoteLoader } from '../utils/RemoteLoader';
 
-const HeaderInfoPage = createRemoteLazyComponent('HeaderInfoPage');
-const ContentInfoPage = createRemoteLazyComponent('ContentInfoPage');
-const FooterContentPage = createRemoteLazyComponent('FooterContentPage');
+const HeaderInfoPage = RemoteLoader.createLazyRemoteComponent('HeaderInfoPage');
+const ContentInfoPage = RemoteLoader.createLazyRemoteComponent('ContentInfoPage');
+const FooterContentPage = RemoteLoader.createLazyRemoteComponent('FooterContentPage');
 
 export default function InfoScreen() {
   return (

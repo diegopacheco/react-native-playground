@@ -2,12 +2,12 @@ const path = require('path');
 const webpack = require('webpack');
 
 const remotes = [
-  { name: 'Calculator', path: './remotes/calculator/Calculator.tsx' },
-  { name: 'NoteTaking', path: './remotes/noteTaking/NoteTaking.tsx' },
-  { name: 'NoteTakingFooter', path: './remotes/noteTaking/NoteTakingFooter.tsx' },
-  { name: 'HeaderInfoPage', path: './remotes/infoPage/HeaderInfoPage.tsx' },
-  { name: 'ContentInfoPage', path: './remotes/infoPage/ContentInfoPage.tsx' },
-  { name: 'FooterContentPage', path: './remotes/infoPage/FooterContentPage.tsx' },
+  { name: 'Calculator', path: './src/calculator/Calculator.tsx' },
+  { name: 'NoteTaking', path: './src/noteTaking/NoteTaking.tsx' },
+  { name: 'NoteTakingFooter', path: './src/noteTaking/NoteTakingFooter.tsx' },
+  { name: 'HeaderInfoPage', path: './src/infoPage/HeaderInfoPage.tsx' },
+  { name: 'ContentInfoPage', path: './src/infoPage/ContentInfoPage.tsx' },
+  { name: 'FooterContentPage', path: './src/infoPage/FooterContentPage.tsx' },
 ];
 
 module.exports = remotes.map(remote => ({
@@ -22,7 +22,7 @@ module.exports = remotes.map(remote => ({
       name: remote.name,
       export: 'default',
     },
-    globalObject: 'this',
+    globalObject: 'globalThis',  // Changed from 'this' to 'globalThis'
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
@@ -54,18 +54,21 @@ module.exports = remotes.map(remote => ({
       commonjs2: 'react',
       commonjs: 'react',
       amd: 'react',
+      var: 'React',
     },
     'react-native': {
       root: 'ReactNative',
       commonjs2: 'react-native',
       commonjs: 'react-native',
       amd: 'react-native',
+      var: 'ReactNative',
     },
     '@react-native-async-storage/async-storage': {
       root: 'AsyncStorage',
       commonjs2: '@react-native-async-storage/async-storage',
       commonjs: '@react-native-async-storage/async-storage',
       amd: '@react-native-async-storage/async-storage',
+      var: 'AsyncStorage',
     },
   },
   plugins: [

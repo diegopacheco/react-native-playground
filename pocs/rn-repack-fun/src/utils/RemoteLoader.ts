@@ -1,61 +1,80 @@
 import React from 'react';
-import { ScriptManager, Script } from '@callstack/repack/client';
+import { ScriptManager } from '@callstack/repack/client';
 
-const REMOTE_SERVER_URL = 'http://localhost:3000/chunks';
-
+/**
+ * RemoteLoader - Load standalone remote scripts (not Module Federation)
+ * Works with simple webpack bundles that expose components as globals
+ */
 export class RemoteLoader {
   private static loadedModules: Map<string, any> = new Map();
   private static loadTimes: Map<string, number> = new Map();
 
+  /**
+   * Load a remote component using ScriptManager
+   * The script should expose the component as a global variable
+   */
   static async loadRemoteComponent(
     componentName: string,
   ): Promise<{ default: React.ComponentType<any> }> {
-    const startTime = performance.now();
-    console.log(`[REMOTE CHUNK] Loading ${componentName} from ${REMOTE_SERVER_URL}`);
+    const startTime = Date.now();
+    console.log(`[RemoteLoader] Loading ${componentName}...`);
 
+    // Check cache first
     if (this.loadedModules.has(componentName)) {
       const cached = this.loadedModules.get(componentName);
-      console.log(`[REMOTE CHUNK] Using cached ${componentName}`);
+      console.log(`[RemoteLoader] Using cached ${componentName}`);
       return cached;
     }
 
     try {
-      const scriptUrl = `${REMOTE_SERVER_URL}/${componentName}.bundle.js`;
+      // Use ScriptManager to load the remote script
+      // The resolver configured in index.js will determine the URL
+      console.log(`[RemoteLoader] Calling ScriptManager.loadScript('${componentName}')`);
+      
+      await ScriptManager.shared.loadScript(componentName);
 
-      await ScriptManager.shared.loadScript(componentName, {
-        url: scriptUrl,
-        method: 'GET',
-        timeout: 30000,
-      });
+      console.log(`[RemoteLoader] Script loaded, checking for component...`);
 
-      const container = await ScriptManager.shared.getContainer(componentName);
-
-      if (!container) {
-        throw new Error(`Failed to get container for ${componentName}`);
+      // After the script is loaded, the component should be available globally
+      // Check for the component on globalThis
+      let Component = null;
+      
+      if ((globalThis as any)[componentName]) {
+        Component = (globalThis as any)[componentName];
+        console.log(`[RemoteLoader] Found ${componentName} on globalThis`);
       }
 
-      await container.init(__webpack_share_scopes__.default);
+      if (!Component) {
+        // List what's available for debugging
+        console.error(`[RemoteLoader] Component ${componentName} not found. Available globals:`, 
+          Object.keys(globalThis).filter(k => k.includes('Calc') || k.includes('Note') || k.includes('Info') || k.includes('Header') || k.includes('Content') || k.includes('Footer')));
+        throw new Error(`Component ${componentName} not found after loading script`);
+      }
 
-      const factory = await container.get('./index');
-      const module = factory();
+      // Wrap in module format
+      const module = { default: Component };
 
+      // Cache the module
       this.loadedModules.set(componentName, module);
 
-      const endTime = performance.now();
-      const duration = (endTime - startTime).toFixed(2);
-      this.loadTimes.set(componentName, parseFloat(duration));
+      const endTime = Date.now();
+      const duration = (endTime - startTime);
+      this.loadTimes.set(componentName, duration);
 
-      console.log(`[REMOTE CHUNK] SUCCESS: ${componentName} loaded in ${duration}ms`);
+      console.log(`[RemoteLoader] SUCCESS: ${componentName} loaded in ${duration}ms`);
 
       return module;
     } catch (error) {
-      const endTime = performance.now();
-      const duration = (endTime - startTime).toFixed(2);
-      console.error(`[REMOTE CHUNK] ERROR: ${componentName} failed after ${duration}ms`, error);
+      const endTime = Date.now();
+      const duration = (endTime - startTime);
+      console.error(`[RemoteLoader] ERROR: ${componentName} failed after ${duration}ms`, error);
       throw error;
     }
   }
 
+  /**
+   * Create a lazy component that will be loaded on demand
+   */
   static createLazyRemoteComponent<T extends React.ComponentType<any>>(
     componentName: string,
   ): React.LazyExoticComponent<T> {
@@ -72,16 +91,16 @@ export class RemoteLoader {
   static printSummary() {
     const times = this.getLoadTimes();
     if (times.length === 0) {
-      console.log('[REMOTE CHUNK] No remote chunks loaded yet');
+      console.log('[RemoteLoader] No remote chunks loaded yet');
       return;
     }
 
-    console.log('[REMOTE CHUNK] === Remote Load Summary ===');
+    console.log('[RemoteLoader] === Remote Load Summary ===');
     times.forEach(({ name, time }) => {
-      console.log(`[REMOTE CHUNK]   ${name}: ${time}ms`);
+      console.log(`[RemoteLoader]   ${name}: ${time}ms`);
     });
     const total = times.reduce((sum, { time }) => sum + time, 0).toFixed(2);
-    console.log(`[REMOTE CHUNK]   TOTAL: ${total}ms`);
-    console.log('[REMOTE CHUNK] ========================');
+    console.log(`[RemoteLoader]   TOTAL: ${total}ms`);
+    console.log('[RemoteLoader] ========================');
   }
 }

@@ -1,9 +1,9 @@
 import React, { Suspense } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { createRemoteLazyComponent } from '../utils/RemoteComponentLoader';
+import { RemoteLoader } from '../utils/RemoteLoader';
 
-const NoteTaking = createRemoteLazyComponent('NoteTaking');
-const NoteTakingFooter = createRemoteLazyComponent('NoteTakingFooter');
+const NoteTaking = RemoteLoader.createLazyRemoteComponent('NoteTaking');
+const NoteTakingFooter = RemoteLoader.createLazyRemoteComponent('NoteTakingFooter');
 
 export default function NotesScreen() {
   return (

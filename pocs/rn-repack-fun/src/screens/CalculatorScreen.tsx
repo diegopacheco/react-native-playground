@@ -1,8 +1,8 @@
 import React, { Suspense } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { createRemoteLazyComponent } from '../utils/RemoteComponentLoader';
+import { RemoteLoader } from '../utils/RemoteLoader';
 
-const Calculator = createRemoteLazyComponent('Calculator');
+const Calculator = RemoteLoader.createLazyRemoteComponent('Calculator');
 
 export default function CalculatorScreen() {
   return (

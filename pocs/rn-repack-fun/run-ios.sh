@@ -9,18 +9,19 @@ bundle exec pod install
 cd ..
 
 if lsof -ti:8081 > /dev/null 2>&1; then
-    echo "Metro bundler is already running on port 8081"
-    METRO_PID=""
+    echo "Webpack dev server is already running on port 8081"
+    WEBPACK_PID=""
 else
-    echo "Starting Metro bundler in background..."
-    npm start &
-    METRO_PID=$!
-    sleep 5
+    echo "Starting Webpack dev server (Re.Pack) in background..."
+    npm run webpack-start &
+    WEBPACK_PID=$!
+    echo "Waiting for webpack to be ready..."
+    sleep 10
 fi
 
 echo "Building and running iOS app..."
 npx react-native run-ios --no-packager
 
-if [ ! -z "$METRO_PID" ]; then
-    wait $METRO_PID
+if [ ! -z "$WEBPACK_PID" ]; then
+    wait $WEBPACK_PID
 fi

@@ -5,9 +5,11 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
+    "ios:webpack": "react-native webpack-bundle --platform ios && react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "webpack-start": "PLATFORM=ios node node_modules/@callstack/repack/dist/bin.js start",
+    "webpack-start": "react-native webpack-start --platform ios",
+    "webpack-bundle": "react-native webpack-bundle --platform ios",
     "test": "jest"
   },
   "dependencies": {

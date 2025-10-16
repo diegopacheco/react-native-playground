@@ -2,7 +2,7 @@ import path from 'path';
 import TerserPlugin from 'terser-webpack-plugin';
 import * as Repack from '@callstack/repack';
 
-export default (env) => {
+export default Repack.defineWebpackConfig((env) => {
   const {
     mode = 'development',
     context = Repack.getDirname(import.meta.url),
@@ -26,25 +26,18 @@ export default (env) => {
     mode,
     devtool: false,
     context,
-    entry: [
-      ...Repack.getInitializationEntries(reactNativePath, {
-        hmr: devServer && devServer.hmr,
-      }),
-      entry,
-    ],
+    entry,
     resolve: {
-      extensions: ['.tsx', '.ts', '.js', '.jsx'],
-      alias: {
-        'react-native': reactNativePath,
-      },
+      ...Repack.getResolveOptions({
+        platform,
+      }),
     },
     output: {
       clean: true,
       hashFunction: 'xxhash64',
-      path: path.join(__dirname, 'build/generated', platform),
+      path: path.join(context, 'build/generated', platform),
       filename: 'index.bundle',
       chunkFilename: '[name].chunk.bundle',
-      publicPath: Repack.getPublicPath({ platform, devServer }),
     },
     optimization: {
       minimize,
@@ -60,21 +53,18 @@ export default (env) => {
       rules: [
         {
           test: /\.[jt]sx?$/,
-          exclude: /node_modules/,
+          type: 'javascript/auto',
           use: {
             loader: 'babel-loader',
             options: {
-              presets: [
-                ['@babel/preset-env', { targets: { node: 'current' } }],
-                '@react-native/babel-preset',
-              ],
+              cacheDirectory: true,
+              presets: ['@react-native/babel-preset'],
             },
           },
         },
-        {
-          test: /\.(png|jpg|gif|svg)$/,
-          type: 'asset/resource',
-        },
+        ...Repack.getAssetTransformRules({
+          platform,
+        }),
       ],
     },
     plugins: [
@@ -106,4 +96,4 @@ export default (env) => {
       }),
     ],
   };
-};
+});
