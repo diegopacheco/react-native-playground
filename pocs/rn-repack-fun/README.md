@@ -128,3 +128,18 @@ http://localhost:3000/chunks/Calculator.bundle.js
   </td> 
 </tr>
 </table> 
+
+### Some WHYS
+
+## Why we need 2 servers?
+
+Webpack Dev Server (8081):
+* Bundles your HOST app code
+* Handles hot reloading during development
+* Serves index.bundle to the iOS app
+* Without this: Your app won't start at all
+
+Remote Server (3000):
+* Serves pre-built REMOTE component chunks
+* Components are loaded on-demand via ScriptManager
+* Without this: Remote components fail to load (which you saw!)
