@@ -21,29 +21,15 @@ export const loadRemoteComponent = async (componentName: string): Promise<{ defa
     const AsyncStorage = require('@react-native-async-storage/async-storage').default;
 
     const globalScope: any = typeof window !== 'undefined' ? window : global;
+
     globalScope.React = React;
     globalScope.ReactNative = ReactNative;
+    globalScope.AsyncStorage = AsyncStorage;
 
-    const exports: any = {};
-    const module = { exports };
+    const indirectEval = eval;
+    indirectEval(code);
 
-    const customRequire = (moduleName: string) => {
-      if (moduleName === 'react') return React;
-      if (moduleName === 'react-native') return ReactNative;
-      if (moduleName === '@react-native-async-storage/async-storage') return { default: AsyncStorage };
-      console.warn(`[REMOTE] Unknown module required: ${moduleName}`);
-      return {};
-    };
-
-    try {
-      const func = new Function('module', 'exports', 'require', code);
-      func(module, exports, customRequire);
-    } catch (evalError) {
-      console.error('[REMOTE] Eval error:', evalError);
-      eval(code);
-    }
-
-    let Component = module.exports || globalScope[componentName];
+    let Component = globalScope[componentName];
 
     if (typeof Component !== 'function' && Component.default) {
       Component = Component.default;
