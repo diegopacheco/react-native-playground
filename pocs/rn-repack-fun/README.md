@@ -112,3 +112,19 @@ http://localhost:3000/chunks/Calculator.bundle.js
 
 ### Results
 
+<table>
+<tr>
+  <td>
+    Calc tab on IOS APP <BR/>
+    <img src="result/result-app-ios-calc-tab.png" width="300" />
+  </td>
+  <td>
+    Notes tab on IOS APP <BR/>
+    <img src="result/result-app-ios-notes-tab.png" width="300" />
+  </td>
+  <td>
+    Info tab on IOS APP <BR/>
+    <img src="result/result-app-ios-info-tab.png" width="300" />
+  </td> 
+</tr>
+</table> 
