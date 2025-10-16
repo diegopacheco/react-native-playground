@@ -1,14 +1,31 @@
 import React, { Suspense } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { Federated } from '@callstack/repack/client';
+import { ScriptManager, Script } from '@callstack/repack/client';
 
-const NoteTaking = React.lazy(() =>
-  Federated.importModule('NoteTaking', 'http://localhost:3000/chunks/NoteTaking.bundle.js')
-);
+const NoteTaking = React.lazy(async () => {
+  console.log('[REMOTE] Loading NoteTaking from remote server...');
 
-const NoteTakingFooter = React.lazy(() =>
-  Federated.importModule('NoteTakingFooter', 'http://localhost:3000/chunks/NoteTakingFooter.bundle.js')
-);
+  await ScriptManager.shared.addResolver(async (scriptId) => {
+    return {
+      url: Script.getRemoteURL(`http://localhost:3000/chunks/${scriptId}.bundle.js`),
+      cache: false,
+    };
+  });
+
+  const { NoteTaking: Component } = await ScriptManager.shared.loadScript('NoteTaking');
+
+  console.log('[REMOTE] NoteTaking loaded successfully');
+  return { default: Component };
+});
+
+const NoteTakingFooter = React.lazy(async () => {
+  console.log('[REMOTE] Loading NoteTakingFooter from remote server...');
+
+  const { NoteTakingFooter: Component } = await ScriptManager.shared.loadScript('NoteTakingFooter');
+
+  console.log('[REMOTE] NoteTakingFooter loaded successfully');
+  return { default: Component };
+});
 
 export default function NotesScreen() {
   return (

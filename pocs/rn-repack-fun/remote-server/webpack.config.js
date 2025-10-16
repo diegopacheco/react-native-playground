@@ -18,8 +18,9 @@ module.exports = remotes.map(remote => ({
     path: path.resolve(__dirname, 'dist'),
     filename: `${remote.name}.bundle.js`,
     library: {
-      type: 'umd',
+      type: 'var',
       name: remote.name,
+      export: 'default',
     },
     globalObject: 'this',
   },

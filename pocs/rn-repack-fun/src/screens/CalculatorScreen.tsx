@@ -1,10 +1,22 @@
 import React, { Suspense } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { Federated } from '@callstack/repack/client';
+import { ScriptManager, Script } from '@callstack/repack/client';
 
-const Calculator = React.lazy(() =>
-  Federated.importModule('Calculator', 'http://localhost:3000/chunks/Calculator.bundle.js')
-);
+const Calculator = React.lazy(async () => {
+  console.log('[REMOTE] Loading Calculator from remote server...');
+
+  await ScriptManager.shared.addResolver(async (scriptId) => {
+    return {
+      url: Script.getRemoteURL(`http://localhost:3000/chunks/${scriptId}.bundle.js`),
+      cache: false,
+    };
+  });
+
+  const { Calculator: Component } = await ScriptManager.shared.loadScript('Calculator');
+
+  console.log('[REMOTE] Calculator loaded successfully');
+  return { default: Component };
+});
 
 export default function CalculatorScreen() {
   return (
