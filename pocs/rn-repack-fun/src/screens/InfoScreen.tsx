@@ -1,40 +1,10 @@
 import React, { Suspense } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
-import { ScriptManager, Script } from '@callstack/repack/client';
+import { createRemoteLazyComponent } from '../utils/RemoteComponentLoader';
 
-const HeaderInfoPage = React.lazy(async () => {
-  console.log('[REMOTE] Loading HeaderInfoPage from remote server...');
-
-  await ScriptManager.shared.addResolver(async (scriptId) => {
-    return {
-      url: Script.getRemoteURL(`http://localhost:3000/chunks/${scriptId}.bundle.js`),
-      cache: false,
-    };
-  });
-
-  const { HeaderInfoPage: Component } = await ScriptManager.shared.loadScript('HeaderInfoPage');
-
-  console.log('[REMOTE] HeaderInfoPage loaded successfully');
-  return { default: Component };
-});
-
-const ContentInfoPage = React.lazy(async () => {
-  console.log('[REMOTE] Loading ContentInfoPage from remote server...');
-
-  const { ContentInfoPage: Component } = await ScriptManager.shared.loadScript('ContentInfoPage');
-
-  console.log('[REMOTE] ContentInfoPage loaded successfully');
-  return { default: Component };
-});
-
-const FooterContentPage = React.lazy(async () => {
-  console.log('[REMOTE] Loading FooterContentPage from remote server...');
-
-  const { FooterContentPage: Component } = await ScriptManager.shared.loadScript('FooterContentPage');
-
-  console.log('[REMOTE] FooterContentPage loaded successfully');
-  return { default: Component };
-});
+const HeaderInfoPage = createRemoteLazyComponent('HeaderInfoPage');
+const ContentInfoPage = createRemoteLazyComponent('ContentInfoPage');
+const FooterContentPage = createRemoteLazyComponent('FooterContentPage');
 
 export default function InfoScreen() {
   return (

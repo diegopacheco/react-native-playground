@@ -7,6 +7,7 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
+    "webpack-start": "PLATFORM=ios node node_modules/@callstack/repack/dist/bin.js start",
     "test": "jest"
   },
   "dependencies": {
