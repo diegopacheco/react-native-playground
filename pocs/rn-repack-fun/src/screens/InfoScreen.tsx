@@ -1,20 +1,17 @@
 import React, { Suspense } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
-import { ChunkLogger } from '../utils/ChunkLogger';
+import { Federated } from '@callstack/repack/client';
 
-const HeaderInfoPage = ChunkLogger.createLazyComponent(
-  'HeaderInfoPage',
-  () => import('../remotes/infoPage/HeaderInfoPage')
+const HeaderInfoPage = React.lazy(() =>
+  Federated.importModule('HeaderInfoPage', 'http://localhost:3000/chunks/HeaderInfoPage.bundle.js')
 );
 
-const ContentInfoPage = ChunkLogger.createLazyComponent(
-  'ContentInfoPage',
-  () => import('../remotes/infoPage/ContentInfoPage')
+const ContentInfoPage = React.lazy(() =>
+  Federated.importModule('ContentInfoPage', 'http://localhost:3000/chunks/ContentInfoPage.bundle.js')
 );
 
-const FooterContentPage = ChunkLogger.createLazyComponent(
-  'FooterContentPage',
-  () => import('../remotes/infoPage/FooterContentPage')
+const FooterContentPage = React.lazy(() =>
+  Federated.importModule('FooterContentPage', 'http://localhost:3000/chunks/FooterContentPage.bundle.js')
 );
 
 export default function InfoScreen() {

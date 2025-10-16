@@ -1,10 +1,9 @@
 import React, { Suspense } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { ChunkLogger } from '../utils/ChunkLogger';
+import { Federated } from '@callstack/repack/client';
 
-const Calculator = ChunkLogger.createLazyComponent(
-  'Calculator',
-  () => import('../remotes/calculator/Calculator')
+const Calculator = React.lazy(() =>
+  Federated.importModule('Calculator', 'http://localhost:3000/chunks/Calculator.bundle.js')
 );
 
 export default function CalculatorScreen() {
@@ -27,16 +26,17 @@ export default function CalculatorScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#000',
   },
   loading: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#000',
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#666',
+    color: '#FFF',
   },
 });

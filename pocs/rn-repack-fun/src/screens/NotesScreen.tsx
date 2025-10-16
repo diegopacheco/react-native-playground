@@ -1,15 +1,13 @@
 import React, { Suspense } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { ChunkLogger } from '../utils/ChunkLogger';
+import { Federated } from '@callstack/repack/client';
 
-const NoteTaking = ChunkLogger.createLazyComponent(
-  'NoteTaking',
-  () => import('../remotes/noteTaking/NoteTaking')
+const NoteTaking = React.lazy(() =>
+  Federated.importModule('NoteTaking', 'http://localhost:3000/chunks/NoteTaking.bundle.js')
 );
 
-const NoteTakingFooter = ChunkLogger.createLazyComponent(
-  'NoteTakingFooter',
-  () => import('../remotes/noteTaking/NoteTakingFooter')
+const NoteTakingFooter = React.lazy(() =>
+  Federated.importModule('NoteTakingFooter', 'http://localhost:3000/chunks/NoteTakingFooter.bundle.js')
 );
 
 export default function NotesScreen() {
