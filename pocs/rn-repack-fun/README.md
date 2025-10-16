@@ -11,11 +11,35 @@
 7. React renders Calculator component
 8. Cached in AsyncStorage for next time
 
-## Server
+## Running 
+
+### Server
 
 run
 ```
 ./run-server.sh
+```
+
+```
+webpack 5.102.1 compiled successfully in 397 ms
+
+Starting remote server...
+
+> remote-server@1.0.0 start
+> node server.js
+
+Remote Chunk Server running on http://localhost:3000
+Chunks available at http://localhost:3000/chunks/
+Health check: http://localhost:3000/health
+
+Available chunks:
+  - Calculator.bundle.js (13.48 KB)
+  - ContentInfoPage.bundle.js (11.15 KB)
+  - FooterContentPage.bundle.js (7.37 KB)
+  - HeaderInfoPage.bundle.js (5.71 KB)
+  - NoteTaking.bundle.js (14.56 KB)
+  - NoteTakingFooter.bundle.js (13.98 KB)
+[CHUNK REQUEST] Calculator.bundle.js | Size: 13.48 KB | Duration: 7ms | Status: 304
 ```
 
 All Chunks
@@ -65,3 +89,26 @@ Get a spesific chunk
 ```
 http://localhost:3000/chunks/Calculator.bundle.js
 ```
+
+## Run the App
+
+```
+./run-ios.sh
+```
+
+```
+ℹ [05:57:28.008Z][Console] [App] React, ReactNative, and AsyncStorage exposed globally
+ℹ [05:57:28.008Z][Console] [ScriptManager] Initialized with resolver and storage
+ℹ [05:57:28.009Z][Console] Running "RepackFun" with {"rootTag":11,"initialProps":{},"fabric":true}
+ℹ [05:57:28.106Z][Console] [RemoteLoader] Loading Calculator...
+ℹ [05:57:28.106Z][Console] [RemoteLoader] Calling ScriptManager.loadScript('Calculator')
+ℹ [05:57:28.154Z][Console] [ScriptManager] Resolving script: Calculator
+ℹ [05:57:28.154Z][Console] [ScriptManager] DEV mode - URL: http://localhost:3000/chunks/Calculator.bundle.js
+ℹ [05:57:28.167Z][Console] [RemoteLoader] Script loaded, checking for component...
+ℹ [05:57:28.167Z][Console] [RemoteLoader] Found Calculator on globalThis
+ℹ [05:57:28.167Z][Console] [RemoteLoader] SUCCESS: Calculator loaded in 60ms
+✔ [05:54:12.985Z][DevServer] Compiled ios in 0.8s
+```
+
+### Results
+
