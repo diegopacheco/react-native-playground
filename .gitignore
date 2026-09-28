@@ -137,3 +137,10 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+target/
+*.class
+*.jar
+*.war
+.bundle/
+!gradle-wrapper.jar
+!maven-wrapper.jar
