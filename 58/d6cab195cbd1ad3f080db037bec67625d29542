@@ -1,0 +1,157 @@
+pocs/kids-drawing-mobile/src/drawings/data/halloween.json
+  s_1ac935812903e5::t_9f75eddd9f9c87 1-4,6-10,12-18
+  s_1ac935812903e5::t_9e3be2e38fcecd 5,11
+pocs/kids-drawing-mobile/LICENSE
+  s_1ac935812903e5::t_1714b7bfd25d77 1-21
+pocs/kids-drawing-mobile/app.json
+  s_1ac935812903e5::t_1714b7bfd25d77 1-2,4-25
+  s_1ac935812903e5::t_e023c13a6c681c 3
+pocs/kids-drawing-mobile/src/components/Canvas.tsx
+  s_1ac935812903e5::t_e023c13a6c681c 1-30,32-90
+  s_1ac935812903e5::t_fad75d49412428 31
+pocs/kids-drawing-mobile/src/drawings/data/sea.json
+  s_1ac935812903e5::t_565b99c2b6510e 10
+  s_1ac935812903e5::t_f382b1fe9223ec 12
+  s_1ac935812903e5::t_54675b638c4732 8
+  s_1ac935812903e5::t_862391bd528767 1-7,9,11,13-18
+pocs/kids-drawing-mobile/src/drawings/data/spring.json
+  s_1ac935812903e5::t_758b4faf00e1e9 10
+  s_1ac935812903e5::t_74c2df417d0427 1,3-9,11,13,15-16
+  s_1ac935812903e5::t_6ae6c241e9c216 2
+  s_1ac935812903e5::t_764258eaf3a10d 12
+  s_1ac935812903e5::t_4149d91df20f2f 14
+pocs/kids-drawing-mobile/src/drawings/data/food.json
+  s_1ac935812903e5::t_2615bb187e0382 3
+  s_1ac935812903e5::t_776e170e40a7d0 1-2,4-7,9-18
+  s_1ac935812903e5::t_336a13872de89b 8
+pocs/kids-drawing-mobile/README.md
+  s_1ac935812903e5::t_7f87684d9cf84e 1-204
+pocs/kids-drawing-mobile/src/drawings/catalog.ts
+  s_1ac935812903e5::t_e023c13a6c681c 1-41
+pocs/kids-drawing-mobile/src/drawings/data/piggy-family.json
+  s_1ac935812903e5::t_47ae32ddc54103 13
+  s_1ac935812903e5::t_f423619164ca5e 1-3,6-12,14
+  s_1ac935812903e5::t_58d11a13a3be5e 4-5
+pocs/kids-drawing-mobile/src/screens/CanvasScreen.tsx
+  s_1ac935812903e5::t_e023c13a6c681c 1-85
+pocs/kids-drawing-mobile/src/screens/GalleryScreen.tsx
+  s_1ac935812903e5::t_e023c13a6c681c 1-60
+pocs/kids-drawing-mobile/scripts/ports.env
+  s_1ac935812903e5::t_a8453dd676cbf6 1
+pocs/kids-drawing-mobile/src/drawings/data/animals.json
+  s_1ac935812903e5::t_67500d930d855e 20
+  s_1ac935812903e5::t_7c30e77b43bee6 10
+  s_1ac935812903e5::t_c760a8599d131b 5
+  s_1ac935812903e5::t_8c8298745f0551 1-4,6-9,11,13-14,16,18-19,21-22,24
+  s_1ac935812903e5::t_62e1e41237f921 17
+  s_1ac935812903e5::t_8af1ba9d25a455 15
+  s_1ac935812903e5::t_30063fd6a6ca35 23
+  s_1ac935812903e5::t_7f7aa6fd8b1030 12
+pocs/kids-drawing-mobile/src/drawings/Shapes.tsx
+  s_1ac935812903e5::t_e023c13a6c681c 1-34
+pocs/kids-drawing-mobile/src/paint/strokes.ts
+  s_1ac935812903e5::t_e023c13a6c681c 1-6,8-67
+  s_1ac935812903e5::t_fad75d49412428 7
+pocs/kids-drawing-mobile/scripts/setup.sh
+  s_1ac935812903e5::t_a8453dd676cbf6 1-10
+pocs/kids-drawing-mobile/tsconfig.json
+  s_1ac935812903e5::t_1714b7bfd25d77 1-6
+pocs/kids-drawing-mobile/.claude/settings.json
+  s_1ac935812903e5::t_1714b7bfd25d77 1-5
+pocs/kids-drawing-mobile/App.tsx
+  s_1ac935812903e5::t_1714b7bfd25d77 1,12-13,24,37-40,42
+  s_1ac935812903e5::t_e023c13a6c681c 2-11,14-23,25-36,41
+pocs/kids-drawing-mobile/scripts/stop-all.sh
+  s_1ac935812903e5::t_a8453dd676cbf6 1-12
+pocs/kids-drawing-mobile/AGENTS.md
+  s_1ac935812903e5::t_1714b7bfd25d77 1-41
+pocs/kids-drawing-mobile/scripts/test-all.sh
+  s_1ac935812903e5::t_a8453dd676cbf6 1-14
+pocs/kids-drawing-mobile/src/drawings/data/summer.json
+  s_1ac935812903e5::t_2c8d409d2b5de9 1-6,8-9,11-16
+  s_1ac935812903e5::t_5111c3de8598d2 10
+  s_1ac935812903e5::t_9704c06bf4efa8 7
+pocs/kids-drawing-mobile/src/drawings/data/blue-pup.json
+  s_1ac935812903e5::t_9aca6e7d1affc3 2-4,6-10
+  s_1ac935812903e5::t_7f5b3edeb2500d 1,5,11-12
+pocs/kids-drawing-mobile/tests/strokes.test.mjs
+  s_1ac935812903e5::t_70e1e2d00c5e20 1-60
+pocs/kids-drawing-mobile/package.json
+  s_1ac935812903e5::t_e023c13a6c681c 9,12-13
+  s_1ac935812903e5::t_b5bbc81a8e28b8 10-11
+  s_1ac935812903e5::t_1714b7bfd25d77 1-8,14-26
+pocs/kids-drawing-mobile/index.ts
+  s_1ac935812903e5::t_1714b7bfd25d77 1-5
+pocs/kids-drawing-mobile/src/components/RoundButton.tsx
+  s_1ac935812903e5::t_e023c13a6c681c 1-33
+pocs/kids-drawing-mobile/src/drawings/data/princess.json
+  s_1ac935812903e5::t_fc7593881142ca 1,4-7,9-18
+  s_1ac935812903e5::t_0547246aef7f18 2-3,8
+pocs/kids-drawing-mobile/src/drawings/data/farm.json
+  s_1ac935812903e5::t_6638e75466ffec 8
+  s_1ac935812903e5::t_cc41f7d123ade4 3
+  s_1ac935812903e5::t_9fdc914db299d8 4
+  s_1ac935812903e5::t_a16712f51fca54 1-2,6-7,9-14
+  s_1ac935812903e5::t_4547b29214d330 5
+pocs/kids-drawing-mobile/scripts/common.sh
+  s_1ac935812903e5::t_a8453dd676cbf6 1-110
+pocs/kids-drawing-mobile/src/screens/HomeScreen.tsx
+  s_1ac935812903e5::t_e023c13a6c681c 1-66
+pocs/kids-drawing-mobile/scripts/status.sh
+  s_1ac935812903e5::t_a8453dd676cbf6 1-14
+pocs/kids-drawing-mobile/scripts/ui.sh
+  s_1ac935812903e5::t_a8453dd676cbf6 1-6
+pocs/kids-drawing-mobile/src/paint/usePainting.ts
+  s_1ac935812903e5::t_e023c13a6c681c 1-80
+pocs/kids-drawing-mobile/src/drawings/data/rescue-pups.json
+  s_1ac935812903e5::t_6404a617ab0c89 2
+  s_1ac935812903e5::t_d7e7b0d467a991 1,3-14
+pocs/kids-drawing-mobile/src/drawings/data/vehicles.json
+  s_1ac935812903e5::t_0b660ca9223fb1 17
+  s_1ac935812903e5::t_00a265fd0c82d7 6
+  s_1ac935812903e5::t_ef097276be6c5c 12
+  s_1ac935812903e5::t_80dc024bfd66cc 1-5,7-11,13-16,18
+pocs/kids-drawing-mobile/tests/catalog.test.mjs
+  s_1ac935812903e5::t_70e1e2d00c5e20 1-70
+pocs/kids-drawing-mobile/scripts/start-all.sh
+  s_1ac935812903e5::t_a8453dd676cbf6 1-21
+pocs/kids-drawing-mobile/src/drawings/data/mouse-friends.json
+  s_1ac935812903e5::t_c6fc70a847ab50 9
+  s_1ac935812903e5::t_f7c6810dbbfb40 2-3
+  s_1ac935812903e5::t_697cbbb83d9d65 1,4-8,10-14
+pocs/kids-drawing-mobile/src/drawings/data/christmas.json
+  s_1ac935812903e5::t_38fcd065c817cc 1-14,16
+  s_1ac935812903e5::t_e1f137061156c5 15
+pocs/kids-drawing-mobile/src/drawings/data/space.json
+  s_1ac935812903e5::t_c2f6a6267f5e1f 13
+  s_1ac935812903e5::t_3760bd1b705a8d 8
+  s_1ac935812903e5::t_11485e237be670 1-7,9-12,14
+pocs/kids-drawing-mobile/src/drawings/data/dinosaurs.json
+  s_1ac935812903e5::t_35de3cd9f82811 5
+  s_1ac935812903e5::t_f9f963412adbb0 8
+  s_1ac935812903e5::t_4237d1cd7d311a 4
+  s_1ac935812903e5::t_a54ca8bfbe4886 1-3,6-7,10,12-14
+  s_1ac935812903e5::t_adc820a52dd1c2 11
+  s_1ac935812903e5::t_526e8c408b3c40 9
+pocs/kids-drawing-mobile/.gitignore
+  s_1ac935812903e5::t_1714b7bfd25d77 1-41
+  s_1ac935812903e5::t_a8453dd676cbf6 42-43
+pocs/kids-drawing-mobile/package-lock.json
+  s_1ac935812903e5::t_93ba38f003ef16 1-6377
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "58d6cab195cbd1ad3f080db037bec67625d29542",
+  "prompts": {},
+  "sessions": {
+    "s_1ac935812903e5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "722c7baa-0149-49a2-9f6c-63b52d3f9850",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "diegopacheco <diego.pacheco.it@gmail.com>"
+    }
+  }
+}
