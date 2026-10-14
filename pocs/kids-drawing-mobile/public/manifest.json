@@ -1,0 +1,16 @@
+{
+  "short_name": "Kids Drawing",
+  "name": "Kids Drawing",
+  "icons": [
+    {
+      "src": "app-icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#FFF3D6",
+  "background_color": "#FFF3D6"
+}
